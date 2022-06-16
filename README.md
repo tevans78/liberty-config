@@ -13,7 +13,7 @@
 [![License](https://img.shields.io/badge/License-EPL%201.0-green.svg)](https://opensource.org/licenses/EPL-1.0)
 
 # Summary
-An implmentation for configuring cloud-native Java microservices
+An implementation for configuring cloud-native Java microservices
 
 ## Getting Started
 
