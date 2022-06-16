@@ -2,10 +2,7 @@
 
 ## Supported Versions
 
-| Version    | Supported          |
-| ---------- | ------------------ |
-| 21.x.x.x   | :white_check_mark: |
-| 22.x.x.x   | :white_check_mark: |
+None... yet! But please report vulnerabilies if you find them.
 
 ## Reporting a Vulnerability
 
