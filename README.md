@@ -10,7 +10,7 @@
 </h1>
 <br />
 
-[![License](https://img.shields.io/badge/License-EPL%201.0-green.svg)](https://opensource.org/licenses/EPL-1.0)
+[![License](https://img.shields.io/badge/License-EPL%202.0-green.svg)](https://opensource.org/licenses/EPL-2.0)
 
 # Summary
 An implementation for configuring cloud-native Java microservices
@@ -34,5 +34,5 @@ Our [CONTRIBUTING](https://github.com/OpenLiberty/config/blob/release/CONTRIBUTI
 
 ## License
 
-Usage is provided under the [EPL 1.0 license](https://opensource.org/licenses/EPL-1.0) See LICENSE for the full details.
+Usage is provided under the [EPL 2.0 license](https://opensource.org/licenses/EPL-2.0) See LICENSE for the full details.
 
