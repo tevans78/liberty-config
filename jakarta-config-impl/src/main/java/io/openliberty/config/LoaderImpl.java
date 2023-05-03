@@ -13,9 +13,13 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 import jakarta.config.ConfigException;
+import jakarta.config.Configuration;
 import jakarta.config.Loader;
+import jakarta.config.NoSuchObjectException;
 import jakarta.config.TypeToken;
 
 public class LoaderImpl implements Loader {
@@ -23,23 +27,33 @@ public class LoaderImpl implements Loader {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T load(Class<T> type) {
+        if (type == null) {
+            throw new NullPointerException("Configuration type was null");
+        }
         T instance = null;
         if (Loader.class == type || LoaderImpl.class == type) {
             instance = (T) this;
         } else {
-            instance = newInstance(type);
-            instance = injectConfig(instance);
+            Configuration configuration = type.getAnnotation(Configuration.class);
+            if (configuration != null) {
+                instance = newInstance(type);
+                instance = injectConfig(instance);
+            } else {
+                throw new NoSuchObjectException("Configuration type not found: " + type);
+            }
         }
         return instance;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <T> T load(TypeToken<T> type) {
-        T instance = null;
-        //TODO this is a massive over simplification
-        Class<?> erased = type.erase();
-        instance = (T) load(erased);
+    public <T> T load(TypeToken<T> typeToken) {
+        if (typeToken == null) {
+            throw new NullPointerException("Configuration type was null");
+        }
+
+        T instance = newInstance(typeToken);
+        injectConfig(instance);
+
         return instance;
     }
 
@@ -49,7 +63,21 @@ public class LoaderImpl implements Loader {
             Constructor<T> xtor = type.getConstructor();
             instance = xtor.newInstance();
         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            e.printStackTrace();
+            throw new ConfigException(e);
+        }
+        return instance;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T newInstance(TypeToken<T> typeToken) {
+        T instance = null;
+        try {
+            Type type = typeToken.type();
+            Class<?> rawType = type instanceof Class<?> ? (Class<?>) type : (Class<?>) ((ParameterizedType) type).getRawType();
+            Constructor<?> constructor = rawType.getConstructor();
+
+            instance = (T) constructor.newInstance();
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new ConfigException(e);
         }
         return instance;
@@ -59,8 +87,9 @@ public class LoaderImpl implements Loader {
         Field[] fields = instance.getClass().getDeclaredFields();
 
         for (Field field : fields) {
+            Type type = field.getGenericType();
             String name = field.getName();
-            Class<?> type = field.getType();
+            //Class<?> type = field.getType();
             Object value = getProperty(name, type);
             setField(instance, field, value);
         }
@@ -86,13 +115,13 @@ public class LoaderImpl implements Loader {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T getProperty(String name, Class<T> type) {
+    private <T> T getProperty(String name, Type type) {
         String stringValue = getStringProperty(name);
         T value = null;
         if (String.class == type) {
             value = (T) stringValue;
         } else {
-            value = deserialize(stringValue, type);
+            value = deserialize(stringValue, Erasure.erase(type));
         }
         return value;
     }
@@ -102,13 +131,13 @@ public class LoaderImpl implements Loader {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T deserialize(String stringValue, Class<T> type) {
+    private <T> T deserialize(String stringValue, Class<?> type) {
         T value = null;
         try {
             Method method = type.getMethod("valueOf", String.class);
             value = (T) method.invoke(null, stringValue);
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            throw new ConfigException(e);
+            throw new ConfigException("static valueOf method not found for type " + type, e);
         }
         return value;
     }

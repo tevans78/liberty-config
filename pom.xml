@@ -34,7 +34,7 @@
   </properties>
 
   <modules>
-    <module>liberty-config</module>
+    <module>jakarta-config-impl</module>
   </modules>
 
   <dependencyManagement>

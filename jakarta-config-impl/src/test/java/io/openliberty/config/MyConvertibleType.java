@@ -9,16 +9,23 @@
  *******************************************************************************/
 package io.openliberty.config;
 
-public class MyConfig {
+public class MyConvertibleType {
 
-    private String propertyA;
-    private String propertyB;
+    private final String value;
 
-    public String getPropertyA() {
-        return propertyA;
+    /**
+     * @param stringValue
+     */
+    public MyConvertibleType(String stringValue) {
+        this.value = stringValue;
     }
 
-    public String getPropertyB() {
-        return propertyB;
+    public static final MyConvertibleType valueOf(String stringValue) {
+        return new MyConvertibleType(stringValue);
+    }
+
+    @Override
+    public String toString() {
+        return "MyConvertibleType: " + value;
     }
 }

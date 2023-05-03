@@ -10,9 +10,9 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>liberty-config</artifactId>
+  <artifactId>jakarta-config-impl</artifactId>
 
-  <name>liberty-config</name>
+  <name>jakarta-config-impl</name>
 
   <dependencies>
     <dependency>
