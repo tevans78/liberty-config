@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.openliberty.config</groupId>
+    <artifactId>mp-config-parent</artifactId>
+    <version>0.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>mp-config-tck</artifactId>
+
+  <name>mp-config-tck</name>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <environmentVariables>
+            <MP_TCK_ENV_DUMMY>dummy</MP_TCK_ENV_DUMMY>
+            <my_int_property>45</my_int_property>
+            <MY_BOOLEAN_PROPERTY>true</MY_BOOLEAN_PROPERTY>
+            <my_string_property>haha</my_string_property>
+            <MY_STRING_PROPERTY>woohoo</MY_STRING_PROPERTY>
+            <config_ordinal>45</config_ordinal>
+            <customer_name>Bob</customer_name>
+          </environmentVariables>
+          <systemPropertyVariables>
+            <mp.tck.prop.dummy>dummy</mp.tck.prop.dummy>
+            <customer.hobby>Tennis</customer.hobby>
+            <config_ordinal>120</config_ordinal>
+          </systemPropertyVariables>
+          <dependenciesToScan>
+            <dependency>org.eclipse.microprofile.config:microprofile-config-tck</dependency>
+          </dependenciesToScan>
+          <!-- Require updates to MP TCK -->
+          <!-- <excludes>
+            <exclude>org.eclipse.microprofile.config.tck.ConverterTest</exclude>
+            <exclude>org.eclipse.microprofile.config.tck.ConfigPropertiesTest</exclude>
+            <exclude>org.eclipse.microprofile.config.tck.broken.ConfigPropertiesMissingPropertyInjectionTest</exclude>
+          </excludes> -->
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <classpathDependencyExcludes>
+                <exclude>org.jboss.weld:weld-core-impl</exclude>
+                <exclude>org.jboss.arquillian.container:arquillian-weld-embedded</exclude>
+              </classpathDependencyExcludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <configuration>
+          <title>Liberty Config</title>
+          <outputName>tck-results</outputName>
+          <outputDirectory>${project.build.directory}</outputDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.openliberty.config</groupId>
+      <artifactId>mp-config-impl</artifactId>
+      <version>${liberty-config.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.openliberty.config</groupId>
+      <artifactId>mp-config-cdi</artifactId>
+      <version>${liberty-config.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.enterprise</groupId>
+      <artifactId>jakarta.enterprise.cdi-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Test Dependencies -->
+    <dependency>
+      <groupId>org.eclipse.microprofile.config</groupId>
+      <artifactId>microprofile-config-tck</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Weld -->
+    <dependency>
+      <groupId>org.jboss.weld</groupId>
+      <artifactId>weld-core-impl</artifactId>
+      <version>5.1.0.Final</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.container</groupId>
+      <artifactId>arquillian-weld-embedded</artifactId>
+      <version>3.0.2.Final</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+</project>

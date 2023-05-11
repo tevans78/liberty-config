@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.openliberty.config</groupId>
+    <artifactId>liberty-config-parent</artifactId>
+    <version>0.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>mp-config-parent</artifactId>
+
+  <packaging>pom</packaging>
+  <name>liberty-config-parent</name>
+
+  <modules>
+    <module>mp-config-impl</module>
+    <module>mp-config-cdi</module>
+    <module>mp-config-tck</module>
+  </modules>
+
+  <properties>
+    <microprofile-config-api.version>3.0.3</microprofile-config-api.version>
+    <jakarta.enterprise.cdi-api.version>4.0.1</jakarta.enterprise.cdi-api.version>
+    <jakarta.annotation-api.version>2.1.1</jakarta.annotation-api.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.eclipse.microprofile.config</groupId>
+        <artifactId>microprofile-config-api</artifactId>
+        <version>${microprofile-config-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.openliberty.config</groupId>
+        <artifactId>mp-config-impl</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.enterprise</groupId>
+        <artifactId>jakarta.enterprise.cdi-api</artifactId>
+        <version>${jakarta.enterprise.cdi-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.annotation</groupId>
+        <artifactId>jakarta.annotation-api</artifactId>
+        <version>${jakarta.annotation-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.config</groupId>
+        <artifactId>microprofile-config-tck</artifactId>
+        <version>${microprofile-config-api.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+</project>

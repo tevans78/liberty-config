@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.openliberty.config</groupId>
+    <artifactId>liberty-config-parent</artifactId>
+    <version>0.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>jakarta-config-parent</artifactId>
+
+  <packaging>pom</packaging>
+  <name>jakarta-config-parent</name>
+
+  <properties>
+     <jakarta.config-api.version>1.0.0-SNAPSHOT</jakarta.config-api.version>
+  </properties>
+
+  <modules>
+    <module>jakarta-config-impl</module>
+  </modules>
+  
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>jakarta.config</groupId>
+        <artifactId>jakarta.config-api</artifactId>
+        <version>${jakarta.config-api.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+</project>

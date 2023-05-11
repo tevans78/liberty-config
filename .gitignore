@@ -4,3 +4,5 @@ target
 #Ignore mac metadata
 .DS_Store
 
+#Ignore vscode metadata
+.vscode
