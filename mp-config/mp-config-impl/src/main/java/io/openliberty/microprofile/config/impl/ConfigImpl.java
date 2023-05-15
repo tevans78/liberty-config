@@ -9,6 +9,8 @@
  *******************************************************************************/
 package io.openliberty.microprofile.config.impl;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.eclipse.microprofile.config.Config;
@@ -20,6 +22,18 @@ import org.eclipse.microprofile.config.spi.Converter;
  *
  */
 public class ConfigImpl implements Config {
+
+    private final List<ConfigSource> configSources;
+    private final Map<Class<?>, Converter<?>> converters;
+
+    /**
+     * @param configSources
+     * @param converters
+     */
+    public ConfigImpl(List<ConfigSource> configSources, Map<Class<?>, Converter<?>> converters) {
+        this.configSources = configSources;
+        this.converters = converters;
+    }
 
     /** {@inheritDoc} */
     @Override

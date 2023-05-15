@@ -12,8 +12,8 @@ package io.openliberty.microprofile.config.cdi;
 import java.lang.annotation.Annotation;
 
 import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 
-import io.openliberty.microprofile.config.impl.ConfigImpl;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.spi.Bean;
@@ -36,7 +36,7 @@ public class ConfigBean extends AbstractConfigBean<Config> implements Bean<Confi
     /** {@inheritDoc} */
     @Override
     public Config create(CreationalContext<Config> creationalContext) {
-        return new ConfigImpl();
+        return ConfigProviderResolver.instance().getConfig();
     }
 
     /** {@inheritDoc} */
