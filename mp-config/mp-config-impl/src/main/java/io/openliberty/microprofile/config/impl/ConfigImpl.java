@@ -24,13 +24,13 @@ import org.eclipse.microprofile.config.spi.Converter;
 public class ConfigImpl implements Config {
 
     private final List<ConfigSource> configSources;
-    private final Map<Class<?>, Converter<?>> converters;
+    private final Map<Class<?>, ? extends Converter<?>> converters;
 
     /**
      * @param configSources
-     * @param converters
+     * @param converters2
      */
-    public ConfigImpl(List<ConfigSource> configSources, Map<Class<?>, Converter<?>> converters) {
+    public ConfigImpl(List<ConfigSource> configSources, Map<Class<?>, ? extends Converter<?>> converters) {
         this.configSources = configSources;
         this.converters = converters;
     }
@@ -38,22 +38,48 @@ public class ConfigImpl implements Config {
     /** {@inheritDoc} */
     @Override
     public <T> T getValue(String propertyName, Class<T> propertyType) {
-        // TODO Auto-generated method stub
-        return null;
+        Optional<T> optionalValue = getOptionalValue(propertyName, propertyType);
+        T value = optionalValue.get();
+        return value;
     }
 
     /** {@inheritDoc} */
     @Override
     public ConfigValue getConfigValue(String propertyName) {
-        // TODO Auto-generated method stub
-        return null;
+        ConfigValue configValue = null;
+        for (ConfigSource source : configSources) {
+            String rawValue = source.getValue(propertyName);
+            if (rawValue != null) {
+                String value = rawValue; //TODO apply transformations/expand variables
+                String sourceName = source.getName();
+                int sourceOrdinal = source.getOrdinal();
+                configValue = new ConfigValueImpl(propertyName, value, rawValue, sourceName, sourceOrdinal);
+                break;
+            }
+        }
+        if (configValue == null) {
+            configValue = new ConfigValueImpl(propertyName, null, null, null, 0);
+        }
+        return configValue;
     }
 
     /** {@inheritDoc} */
     @Override
     public <T> Optional<T> getOptionalValue(String propertyName, Class<T> propertyType) {
-        // TODO Auto-generated method stub
-        return Optional.empty();
+        Optional<T> value = null;
+        ConfigValue configValue = getConfigValue(propertyName);
+        if (configValue != null) {
+            String stringValue = configValue.getValue();
+            if (stringValue == null) {
+                value = Optional.empty();
+            } else {
+                T convertedValue = (T) stringValue; //TODO apply converters
+                value = Optional.of(convertedValue);
+            }
+        } else {
+            value = Optional.empty();
+        }
+        return value;
     }
 
     /** {@inheritDoc} */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2023 IBM Corporation and others.
+ * Copyright (c) 2019, 2023 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -9,21 +9,24 @@
  *******************************************************************************/
 package io.openliberty.microprofile.config.impl.converters;
 
-/**
- *
- */
-public class StringConverter extends BuiltInConverter<String> {
+public class CharacterConverter extends BuiltInConverter<Character> {
 
-    private static final long serialVersionUID = 8019214281322398345L;
+    private static final long serialVersionUID = -8355509709773152063L;
 
-    public StringConverter() {
-        super(String.class);
+    public CharacterConverter() {
+        super(Character.class);
     }
 
     /** {@inheritDoc} */
     @Override
-    public String convert(String value) {
-        return value;
+    public Character convert(String v) {
+        if (v == null) {
+            return null;
+        }
+        if (v.length() != 1) {
+            throw new IllegalArgumentException("Not a valid character: " + v);
+        } else {
+            return v.charAt(0);
+        }
     }
-
 }

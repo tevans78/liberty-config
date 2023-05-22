@@ -7,23 +7,25 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package io.openliberty.microprofile.config.impl.converters;
+package io.openliberty.microprofile.config.impl.exceptions;
 
 /**
  *
  */
-public class StringConverter extends BuiltInConverter<String> {
+public class ConfigException extends RuntimeException {
 
-    private static final long serialVersionUID = 8019214281322398345L;
+    private static final long serialVersionUID = -3878061133593831054L;
 
-    public StringConverter() {
-        super(String.class);
+    public ConfigException(String message) {
+        super(message);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String convert(String value) {
-        return value;
+    public ConfigException(Throwable throwable) {
+        super(throwable);
+    }
+
+    public ConfigException(String message, Throwable throwable) {
+        super(message, throwable);
     }
 
 }

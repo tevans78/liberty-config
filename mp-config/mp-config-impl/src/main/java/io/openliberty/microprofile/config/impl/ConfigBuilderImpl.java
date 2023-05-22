@@ -11,7 +11,6 @@ package io.openliberty.microprofile.config.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,9 +19,11 @@ import org.eclipse.microprofile.config.spi.ConfigBuilder;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.eclipse.microprofile.config.spi.Converter;
 
-import io.openliberty.microprofile.config.impl.converters.StringConverter;
-import io.openliberty.microprofile.config.impl.sources.EnvironmentConfigSource;
-import io.openliberty.microprofile.config.impl.sources.SystemPropertyConfigSource;
+import io.openliberty.microprofile.config.impl.converters.DefaultConverters;
+import io.openliberty.microprofile.config.impl.converters.PriorityConverter;
+import io.openliberty.microprofile.config.impl.converters.PriorityConverterMap;
+import io.openliberty.microprofile.config.impl.converters.UserConverter;
+import io.openliberty.microprofile.config.impl.sources.DefaultSources;
 
 /**
  *
@@ -33,10 +34,8 @@ public class ConfigBuilderImpl implements ConfigBuilder {
     private boolean addDiscoveredSources = false;
     private boolean addDiscoveredConverters = false;
     private ClassLoader loader = Thread.currentThread().getContextClassLoader();
-    private final Map<Class<?>, PriorityConverter<?>> priorityConverters = new HashMap<>();
+    private final PriorityConverterMap priorityConverters = new PriorityConverterMap();
     private final List<ConfigSource> configSources = new ArrayList<>();
-    private List<ConfigSource> defaultSources;
-    private Map<Class<?>, Converter<?>> defaultConverters;
 
     /** {@inheritDoc} */
     @Override
@@ -87,22 +86,13 @@ public class ConfigBuilderImpl implements ConfigBuilder {
     /** {@inheritDoc} */
     @Override
     public <T> ConfigBuilder withConverter(Class<T> type, int priority, Converter<T> converter) {
-        PriorityConverter<T> priorityConverter = new PriorityConverter<T>(type, priority, converter);
-        withConverter(priorityConverter);
+        UserConverter<T> priorityConverter = new UserConverter<T>(type, priority, converter);
+        this.priorityConverters.addConverter(priorityConverter);
         return this;
     }
 
     private <T> ConfigBuilder withConverter(Converter<T> converter) {
-        withConverter(PriorityConverter.eraseConverterType(converter), PriorityConverter.DEFAULT_CONVERTER_PRIORITY, converter);
-        return this;
-    }
-
-    private <T> ConfigBuilder withConverter(PriorityConverter<T> converter) {
-        Class<T> type = converter.getType();
-        PriorityConverter<T> existing = (PriorityConverter<T>) this.priorityConverters.get(type);
-        if (existing == null || existing.getPriority() < converter.getPriority()) {
-            this.priorityConverters.put(type, converter);
-        }
+        withConverter(UserConverter.eraseConverterType(converter), PriorityConverter.DEFAULT_CONVERTER_PRIORITY, converter);
         return this;
     }
 
@@ -110,50 +100,36 @@ public class ConfigBuilderImpl implements ConfigBuilder {
     @Override
     public Config build() {
         List<ConfigSource> configSources = finalizeConfigSources(this.loader);
-        Map<Class<?>, Converter<?>> converters = finalizeConverters(this.loader);
+        Map<Class<?>, ? extends Converter<?>> converters = finalizeConverters(this.loader);
         return new ConfigImpl(configSources, converters);
     }
 
-    private Map<Class<?>, Converter<?>> finalizeConverters(ClassLoader loader) {
-        Map<Class<?>, Converter<?>> finalConverters = new HashMap<>();
-        finalConverters.putAll(getDefaultConverters());
-        //TODO discover converters via loader
-        return finalConverters;
-    }
-
-    /**
-     * @return
-     */
-    private Map<Class<?>, Converter<?>> getDefaultConverters() {
-        if (this.defaultConverters == null) {
-            defaultConverters = new HashMap<>();
-            defaultConverters.put(String.class, new StringConverter());
-            //TODO add the others
+    private Map<Class<?>, ? extends Converter<?>> finalizeConverters(ClassLoader loader) {
+        PriorityConverterMap finalConverters = new PriorityConverterMap();
+        finalConverters.addAll(DefaultConverters.getDefaultConverters());
+        if (this.addDiscoveredConverters) {
+            finalConverters.addAll(DefaultConverters.getDiscoveredConverters(loader));
         }
-        return defaultConverters;
+
+        return finalConverters;
     }
 
     private List<ConfigSource> finalizeConfigSources(ClassLoader loader) {
         List<ConfigSource> finalSources = new ArrayList<>();
         if (this.addDefaultSources) {
-            finalSources.addAll(getDefaultSources());
+            finalSources.addAll(DefaultSources.getDefaultSources(loader));
         }
-        Collections.sort(finalSources, ConfigSourceComparator.INSTANCE);
-        //TODO discover sources via loader
-        return finalSources;
-    }
+        if (this.addDiscoveredSources) {
+            finalSources.addAll(DefaultSources.getDiscoveredSources(loader));
+        }
 
-    /**
-     * @return
-     */
-    private List<ConfigSource> getDefaultSources() {
-        if (this.defaultSources == null) {
-            defaultSources = new ArrayList<>();
-            defaultSources.add(new SystemPropertyConfigSource());
-            defaultSources.add(new EnvironmentConfigSource());
-            //TODO add the others
+        Collections.sort(finalSources, ConfigSourceComparator.INSTANCE);
+
+        for (ConfigSource source : finalSources) {
+            System.out.println(source.getOrdinal() + ": " + source.getName());
         }
-        return defaultSources;
+
+        return finalSources;
     }
 
 }

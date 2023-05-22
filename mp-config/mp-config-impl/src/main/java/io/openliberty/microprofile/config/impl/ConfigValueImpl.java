@@ -16,39 +16,48 @@ import org.eclipse.microprofile.config.ConfigValue;
  */
 public class ConfigValueImpl implements ConfigValue {
 
+    private final String propertyName;
+    private final String value;
+    private final String rawValue;
+    private final String sourceName;
+    private final int sourceOrdinal;
+
+    public ConfigValueImpl(String propertyName, String value, String rawValue, String sourceName, int sourceOrdinal) {
+        this.propertyName = propertyName;
+        this.value = value;
+        this.rawValue = rawValue;
+        this.sourceName = sourceName;
+        this.sourceOrdinal = sourceOrdinal;
+    }
+
     /** {@inheritDoc} */
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.propertyName;
     }
 
     /** {@inheritDoc} */
     @Override
     public String getValue() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.value;
     }
 
     /** {@inheritDoc} */
     @Override
     public String getRawValue() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.rawValue;
     }
 
     /** {@inheritDoc} */
     @Override
     public String getSourceName() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.sourceName;
     }
 
     /** {@inheritDoc} */
     @Override
     public int getSourceOrdinal() {
-        // TODO Auto-generated method stub
-        return 0;
+        return this.sourceOrdinal;
     }
 
 }

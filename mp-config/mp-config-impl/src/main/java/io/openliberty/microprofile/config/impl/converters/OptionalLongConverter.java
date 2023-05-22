@@ -9,21 +9,30 @@
  *******************************************************************************/
 package io.openliberty.microprofile.config.impl.converters;
 
+import java.util.OptionalLong;
+
 /**
  *
  */
-public class StringConverter extends BuiltInConverter<String> {
+public class OptionalLongConverter extends BuiltInConverter<OptionalLong> {
 
-    private static final long serialVersionUID = 8019214281322398345L;
+    private static final long serialVersionUID = 1718702805391557912L;
 
-    public StringConverter() {
-        super(String.class);
+    public OptionalLongConverter() {
+        super(OptionalLong.class);
     }
 
     /** {@inheritDoc} */
     @Override
-    public String convert(String value) {
-        return value;
+    public OptionalLong convert(String value) {
+        if (value == null) {
+            throw new NullPointerException("String value was null");
+        }
+
+        Long longValue = Long.valueOf(value);
+        OptionalLong optionalLong = OptionalLong.of(longValue);
+
+        return optionalLong;
     }
 
 }

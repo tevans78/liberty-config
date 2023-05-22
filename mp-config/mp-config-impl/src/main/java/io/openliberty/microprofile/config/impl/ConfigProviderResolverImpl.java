@@ -21,36 +21,40 @@ public class ConfigProviderResolverImpl extends ConfigProviderResolver {
     /** {@inheritDoc} */
     @Override
     public Config getConfig() {
-        // TODO Auto-generated method stub
-        return null;
+        Config config = getConfig(Thread.currentThread().getContextClassLoader());
+        return config;
     }
 
     /** {@inheritDoc} */
     @Override
     public Config getConfig(ClassLoader loader) {
-        // TODO Auto-generated method stub
-        return null;
+        ConfigBuilder builder = getBuilder();
+        builder.forClassLoader(loader);
+        builder.addDefaultSources();
+        builder.addDiscoveredSources();
+        builder.addDiscoveredConverters();
+        Config config = builder.build(); //TODO cache config by loader
+        return config;
     }
 
     /** {@inheritDoc} */
     @Override
     public ConfigBuilder getBuilder() {
-        // TODO Auto-generated method stub
-        return null;
+        return new ConfigBuilderImpl();
     }
 
     /** {@inheritDoc} */
     @Override
     public void registerConfig(Config config, ClassLoader classLoader) {
         // TODO Auto-generated method stub
-        
+
     }
 
     /** {@inheritDoc} */
     @Override
     public void releaseConfig(Config config) {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

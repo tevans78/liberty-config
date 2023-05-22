@@ -23,7 +23,10 @@ public class ConfigSourceComparator implements Comparator<ConfigSource> {
     /** {@inheritDoc} */
     @Override
     public int compare(ConfigSource o1, ConfigSource o2) {
-        return o1.getOrdinal() - o2.getOrdinal();
+        //if the ordinal of o2 is higher than o1, return a positive integer
+        //if the ordinal of o2 is lower than o1, return a negative integer
+        //if equal, return zero
+        return o2.getOrdinal() - o1.getOrdinal();
     }
 
 }
